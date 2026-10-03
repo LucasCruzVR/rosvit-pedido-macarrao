@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { criarPedidoVazio, type PedidoMacarrao } from '../types'
-import { precoPorTamanho } from '../data/ingredientes'
+import { QUANTIDADE_MAXIMA, QUANTIDADE_MINIMA, precoPorTamanho } from '../data/ingredientes'
 
 let contador = 0
 function proximoId(): string {
@@ -23,6 +23,16 @@ export function usePedidos() {
     setPedidos((atual) => atual.map((p) => (p.id === id ? { ...p, ...alteracoes } : p)))
   }, [])
 
+  const alterarQuantidade = useCallback((id: string, delta: number) => {
+    setPedidos((atual) =>
+      atual.map((p) => {
+        if (p.id !== id) return p
+        const novaQuantidade = Math.min(QUANTIDADE_MAXIMA, Math.max(QUANTIDADE_MINIMA, p.quantidade + delta))
+        return { ...p, quantidade: novaQuantidade }
+      }),
+    )
+  }, [])
+
   const alternarItemLista = useCallback(
     (id: string, campo: 'molhos' | 'carnes' | 'queijos' | 'outrosIngredientes', item: string) => {
       setPedidos((atual) =>
@@ -40,13 +50,14 @@ export function usePedidos() {
     [],
   )
 
-  const totalGeral = pedidos.reduce((soma, p) => soma + precoPorTamanho(p.tamanho), 0)
+  const totalGeral = pedidos.reduce((soma, p) => soma + precoPorTamanho(p.tamanho) * p.quantidade, 0)
 
   return {
     pedidos,
     adicionarPedido,
     removerPedido,
     atualizarPedido,
+    alterarQuantidade,
     alternarItemLista,
     totalGeral,
   }

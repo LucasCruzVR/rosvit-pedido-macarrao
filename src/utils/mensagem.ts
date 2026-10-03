@@ -17,9 +17,16 @@ function formatarLinhaLista(titulo: string, itens: string[]): string | null {
 
 export function formatarPedidoUnico(pedido: PedidoMacarrao, indice: number): string {
   const preco = precoPorTamanho(pedido.tamanho)
+  const subtotal = preco * pedido.quantidade
   const nomeParte = pedido.nomeCliente.trim() ? ` - ${pedido.nomeCliente.trim()}` : ''
+  const quantidadeParte =
+    pedido.quantidade > 1 ? `${pedido.quantidade}x ${pedido.tipo}` : pedido.tipo
+  const precoParte =
+    pedido.quantidade > 1
+      ? `R$ ${formatarPreco(preco)} cada = R$ ${formatarPreco(subtotal)}`
+      : `R$ ${formatarPreco(subtotal)}`
   const linhas: string[] = [
-    `Pedido ${indice + 1}${nomeParte}: ${pedido.tipo} (${pedido.tamanho} - ${labelTamanho(pedido.tamanho)} - R$ ${formatarPreco(preco)})`,
+    `Pedido ${indice + 1}${nomeParte}: ${quantidadeParte} (${pedido.tamanho} - ${labelTamanho(pedido.tamanho)} - ${precoParte})`,
   ]
 
   const molhos = formatarLinhaLista('Molho', pedido.molhos)
@@ -36,7 +43,7 @@ export function formatarPedidoUnico(pedido: PedidoMacarrao, indice: number): str
 
 export function formatarMensagemCompleta(pedidos: PedidoMacarrao[]): string {
   const blocos = pedidos.map((pedido, indice) => formatarPedidoUnico(pedido, indice))
-  const total = pedidos.reduce((soma, p) => soma + precoPorTamanho(p.tamanho), 0)
+  const total = pedidos.reduce((soma, p) => soma + precoPorTamanho(p.tamanho) * p.quantidade, 0)
 
   const cabecalho = `Olá! Gostaria de fazer o seguinte pedido na ${LOJA.nome} - ${LOJA.subtitulo}:`
   const rodape = `Total: R$ ${formatarPreco(total)}`

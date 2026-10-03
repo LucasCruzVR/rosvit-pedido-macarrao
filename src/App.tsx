@@ -4,7 +4,8 @@ import { ResumoEnvio } from './components/ResumoEnvio'
 import { usePedidos } from './hooks/usePedidos'
 
 function App() {
-  const { pedidos, adicionarPedido, removerPedido, atualizarPedido, alternarItemLista, totalGeral } = usePedidos()
+  const { pedidos, adicionarPedido, removerPedido, atualizarPedido, alterarQuantidade, alternarItemLista, totalGeral } =
+    usePedidos()
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f4f1ec]">
@@ -18,6 +19,7 @@ function App() {
             indice={indice}
             podeRemover={pedidos.length > 1}
             onAtualizar={(alteracoes) => atualizarPedido(pedido.id, alteracoes)}
+            onAlterarQuantidade={(delta) => alterarQuantidade(pedido.id, delta)}
             onAlternarItem={(campo, item) => alternarItemLista(pedido.id, campo, item)}
             onRemover={() => removerPedido(pedido.id)}
           />

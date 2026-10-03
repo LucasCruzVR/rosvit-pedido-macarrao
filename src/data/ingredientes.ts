@@ -2,6 +2,9 @@ import type { OpcaoTamanho, TipoMacarrao } from '../types'
 
 export const TIPOS_MACARRAO: TipoMacarrao[] = ['Espaguete', 'Penne']
 
+export const QUANTIDADE_MINIMA = 1
+export const QUANTIDADE_MAXIMA = 5
+
 export const TAMANHOS: OpcaoTamanho[] = [
   { codigo: 'PQ', label: 'Pequeno', preco: 25 },
   { codigo: 'MD', label: 'Médio', preco: 30 },

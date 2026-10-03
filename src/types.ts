@@ -14,6 +14,7 @@ export interface PedidoMacarrao {
   nomeCliente: string
   tipo: TipoMacarrao
   tamanho: Tamanho
+  quantidade: number
   molhos: string[]
   carnes: string[]
   queijos: string[]
@@ -26,6 +27,7 @@ export function criarPedidoVazio(id: string): PedidoMacarrao {
     nomeCliente: '',
     tipo: 'Espaguete',
     tamanho: 'MD',
+    quantidade: 1,
     molhos: [],
     carnes: [],
     queijos: [],

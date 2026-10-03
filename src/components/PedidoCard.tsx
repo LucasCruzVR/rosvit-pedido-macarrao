@@ -1,5 +1,15 @@
 import type { PedidoMacarrao, Tamanho, TipoMacarrao } from '../types'
-import { CARNES, MOLHOS, OUTROS_INGREDIENTES, QUEIJOS, TAMANHOS, TIPOS_MACARRAO, precoPorTamanho } from '../data/ingredientes'
+import {
+  CARNES,
+  MOLHOS,
+  OUTROS_INGREDIENTES,
+  QUANTIDADE_MAXIMA,
+  QUANTIDADE_MINIMA,
+  QUEIJOS,
+  TAMANHOS,
+  TIPOS_MACARRAO,
+  precoPorTamanho,
+} from '../data/ingredientes'
 import { ListaSelecionavel } from './ListaSelecionavel'
 
 interface PedidoCardProps {
@@ -7,6 +17,7 @@ interface PedidoCardProps {
   indice: number
   podeRemover: boolean
   onAtualizar: (alteracoes: Partial<PedidoMacarrao>) => void
+  onAlterarQuantidade: (delta: number) => void
   onAlternarItem: (campo: 'molhos' | 'carnes' | 'queijos' | 'outrosIngredientes', item: string) => void
   onRemover: () => void
 }
@@ -15,15 +26,47 @@ function formatarPreco(valor: number): string {
   return valor.toFixed(2).replace('.', ',')
 }
 
-export function PedidoCard({ pedido, indice, podeRemover, onAtualizar, onAlternarItem, onRemover }: PedidoCardProps) {
+export function PedidoCard({
+  pedido,
+  indice,
+  podeRemover,
+  onAtualizar,
+  onAlterarQuantidade,
+  onAlternarItem,
+  onRemover,
+}: PedidoCardProps) {
   const preco = precoPorTamanho(pedido.tamanho)
+  const subtotal = preco * pedido.quantidade
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
       <div className="flex items-center justify-between bg-rosvit-black text-rosvit-cream px-4 py-3">
         <h2 className="font-display font-semibold text-lg">Macarrão {indice + 1}</h2>
         <div className="flex items-center gap-3">
-          <span className="text-rosvit-red font-semibold">R$ {formatarPreco(preco)}</span>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => onAlterarQuantidade(-1)}
+              disabled={pedido.quantidade <= QUANTIDADE_MINIMA}
+              aria-label={`Diminuir quantidade do Macarrão ${indice + 1}`}
+              className="h-6 w-6 flex items-center justify-center rounded-full bg-rosvit-cream/15 text-rosvit-cream disabled:opacity-30 disabled:cursor-not-allowed hover:bg-rosvit-cream/25"
+            >
+              -
+            </button>
+            <span className="w-4 text-center text-sm font-semibold" aria-live="polite">
+              {pedido.quantidade}
+            </span>
+            <button
+              type="button"
+              onClick={() => onAlterarQuantidade(1)}
+              disabled={pedido.quantidade >= QUANTIDADE_MAXIMA}
+              aria-label={`Aumentar quantidade do Macarrão ${indice + 1}`}
+              className="h-6 w-6 flex items-center justify-center rounded-full bg-rosvit-cream/15 text-rosvit-cream disabled:opacity-30 disabled:cursor-not-allowed hover:bg-rosvit-cream/25"
+            >
+              +
+            </button>
+          </div>
+          <span className="text-rosvit-red font-semibold">R$ {formatarPreco(subtotal)}</span>
           {podeRemover && (
             <button
               type="button"
